@@ -3,10 +3,12 @@ package br.ce.wcaquino.servicos;
 import java.util.Date;
 
 import org.hamcrest.CoreMatchers;
-
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.internal.runners.statements.ExpectException;
 import org.junit.rules.ErrorCollector;
+import org.junit.rules.ExpectedException;
 
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
@@ -18,8 +20,11 @@ public class LocacaoServiceTest {
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
 	
+	@Rule
+	public ExpectedException exception = ExpectedException.none();
+	
 	@Test
-	public void teste() {
+	public void testeLocacao() throws Exception {
 		//cenario
 		LocacaoService service = new LocacaoService();
 		Usuario usuario = new Usuario("Usuario 1");
@@ -34,6 +39,49 @@ public class LocacaoServiceTest {
 		error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), CoreMatchers.is(true));
 		error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), 
 				CoreMatchers.is(true));
+	}
+	
+	//Forma Elegante
+	@Test(expected = Exception.class)
+	public void testeLocacao_filmeSemEstoque() throws Exception {
+		//cenario
+		LocacaoService service = new LocacaoService();
+		Usuario usuario = new Usuario("Usuario 1");
+		Filme filme = new Filme("Filme 1", 0, 5.0);
+		
+		//acao
+		service.alugarFilme(usuario, filme);
+	}
+	
+	//Forma não tão Elegante, porém permite validar pelo objeto da Exception
+	@Test
+	public void testeLocacao_filmeSemEstoque_2() {
+		//cenario
+		LocacaoService service = new LocacaoService();
+		Usuario usuario = new Usuario("Usuario 1");
+		Filme filme = new Filme("Filme 1", 0, 5.0);
+		
+		//acao
+		try {
+			service.alugarFilme(usuario, filme);
+		} catch (Exception e) {
+			Assert.assertThat(e.getMessage(), CoreMatchers.is("Filme sem estoque"));
+		}
+	}
+	
+	//Forma Nova
+	@Test
+	public void testeLocacao_filmeSemEstoque_3() throws Exception {
+		//cenario
+		LocacaoService service = new LocacaoService();
+		Usuario usuario = new Usuario("Usuario 1");
+		Filme filme = new Filme("Filme 1", 0, 5.0);
+		
+		exception.expect(Exception.class);
+		exception.expectMessage("Filme sem estoque");
+		
+		//acao
+		service.alugarFilme(usuario, filme);
 	}
 
 }
