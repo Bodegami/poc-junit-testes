@@ -1,6 +1,7 @@
 package br.ce.wcaquino.servicos;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class LocacaoServiceTest {
 	}
 	
 	@Test
-	public void testeLocacao() throws Exception {
+	public void deveAlugarFilme() throws Exception {
 		//cenario
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 2, 5.0);
@@ -58,7 +59,7 @@ public class LocacaoServiceTest {
 	
 	//Forma Elegante
 	@Test(expected = FilmeSemEstoqueException.class)
-	public void testeLocacao_filmeSemEstoque() throws Exception {
+	public void deveLancarExcecaoAoAlugarFilmeSemEstoque_01() throws Exception {
 		//cenario
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 0, 5.0);
@@ -70,7 +71,7 @@ public class LocacaoServiceTest {
 	
 	//Forma não tão Elegante, porém permite validar pelo objeto da Exception
 	@Test
-	public void testeLocacao_filmeSemEstoque_2() {
+	public void deveLancarExcecaoAoAlugarFilmeSemEstoque_02() {
 		//cenario
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 0, 5.0);
@@ -86,7 +87,7 @@ public class LocacaoServiceTest {
 	
 	//Forma Nova
 	@Test
-	public void testeLocacao_filmeSemEstoque_3() throws Exception {
+	public void deveLancarExcecaoAoAlugarFilmeSemEstoque_03() throws Exception {
 		//cenario
 		Usuario usuario = new Usuario("Usuario 1");
 		Filme filme = new Filme("Filme 1", 0, 5.0);
@@ -100,7 +101,7 @@ public class LocacaoServiceTest {
 	}
 
 	@Test
-	public void testeLocacao_usuarioVazio() throws FilmeSemEstoqueException {
+	public void deveLancarExcecaoAoAlugarFilmeSemUsuario() throws FilmeSemEstoqueException {
 
 		Filme filme = new Filme("Filme 1", 2, 5.0);
 		filmes.add(filme);
@@ -115,7 +116,7 @@ public class LocacaoServiceTest {
 	}
 	
 	@Test
-	public void testeLocacao_filmeVazio() throws FilmeSemEstoqueException, LocadoraException {
+	public void deveLancarExcecaoAoAlugarFilmeSemFilme() throws FilmeSemEstoqueException, LocadoraException {
 		
 		Usuario usuario = new Usuario("Usuario 1");
 		
@@ -123,5 +124,59 @@ public class LocacaoServiceTest {
 		exception.expectMessage("filme vazio");
 		
 		service.alugarFilme(usuario, null);
+	}
+	
+	@Test
+	public void devePagar75PorcentoNoFilme_3() throws FilmeSemEstoqueException, LocadoraException {
+		Usuario usuario = new Usuario("Usuario 1");
+		filmes.addAll(Arrays.asList(new Filme("Filme 1", 2, 4.0), new Filme("Filme 2", 2, 4.0), new Filme("Filme 3", 2, 4.0)));
+		
+		Locacao resultado = service.alugarFilme(usuario, filmes);
+		
+		//4+4+3==11
+		Assert.assertThat(resultado.getValor(), CoreMatchers.is(11.0));
+		
+	}
+	
+	@Test
+	public void devePagar50PorcentoNoFilme_4() throws FilmeSemEstoqueException, LocadoraException {
+		Usuario usuario = new Usuario("Usuario 1");
+		filmes.addAll(Arrays.asList(
+				new Filme("Filme 1", 2, 4.0), new Filme("Filme 2", 2, 4.0), 
+				new Filme("Filme 3", 2, 4.0), new Filme("Filme 4", 2, 4.0)));
+		
+		Locacao resultado = service.alugarFilme(usuario, filmes);
+		
+		//4+4+3+2==13
+		Assert.assertThat(resultado.getValor(), CoreMatchers.is(13.0));
+		
+	}
+	
+	@Test
+	public void devePagar25PorcentoNoFilme_5() throws FilmeSemEstoqueException, LocadoraException {
+		Usuario usuario = new Usuario("Usuario 1");
+		filmes.addAll(Arrays.asList(
+				new Filme("Filme 1", 2, 4.0), new Filme("Filme 2", 2, 4.0),	new Filme("Filme 3", 2, 4.0), 
+				new Filme("Filme 4", 2, 4.0), new Filme("Filme 5", 2, 4.0)));
+		
+		Locacao resultado = service.alugarFilme(usuario, filmes);
+		
+		//4+4+3+2+1==14
+		Assert.assertThat(resultado.getValor(), CoreMatchers.is(14.0));
+		
+	}
+	
+	@Test
+	public void devePagar0PorcentoNoFilme_6() throws FilmeSemEstoqueException, LocadoraException {
+		Usuario usuario = new Usuario("Usuario 1");
+		filmes.addAll(Arrays.asList(
+				new Filme("Filme 1", 2, 4.0), new Filme("Filme 2", 2, 4.0),	new Filme("Filme 3", 2, 4.0), 
+				new Filme("Filme 4", 2, 4.0), new Filme("Filme 5", 2, 4.0), new Filme("Filme 6", 2, 4.0)));
+		
+		Locacao resultado = service.alugarFilme(usuario, filmes);
+		
+		//4+4+3+2+1+0==14
+		Assert.assertThat(resultado.getValor(), CoreMatchers.is(14.0));
+		
 	}
 }
