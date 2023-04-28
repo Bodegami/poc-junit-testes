@@ -22,6 +22,8 @@ import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.matchers.MatchersProprios;
 import br.ce.wcaquino.utils.DataUtils;
 
+import static org.hamcrest.CoreMatchers.is;
+
 public class LocacaoServiceTest {
 	
 	private LocacaoService service;
@@ -54,11 +56,12 @@ public class LocacaoServiceTest {
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 		
 		//verificacao
-		error.checkThat(locacao.getValor(), CoreMatchers.is(CoreMatchers.equalTo(11.0)));
-		error.checkThat(locacao.getValor(), CoreMatchers.is(CoreMatchers.not(6.0)));
-		error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), CoreMatchers.is(true));
-		error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), 
-				CoreMatchers.is(true));
+		error.checkThat(locacao.getValor(), is(CoreMatchers.equalTo(11.0)));
+		error.checkThat(locacao.getValor(), is(CoreMatchers.not(6.0)));
+		error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+		error.checkThat(locacao.getDataLocacao(), MatchersProprios.ehHoje());
+		error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), is(true));
+		error.checkThat(locacao.getDataRetorno(), MatchersProprios.ehHojeComDiferencaDias(1));
 	}
 	
 	//Forma Elegante
