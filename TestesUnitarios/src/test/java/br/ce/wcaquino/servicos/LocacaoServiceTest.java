@@ -175,7 +175,7 @@ public class LocacaoServiceTest {
 		//Ele sabe se é o mesmo objeto fazendo uma comparacao com o informado no when
 		//e com o que foi passado na chamada metodo. Esse comparacao é feita usando o
 		//equals da classe do objeto
-		Mockito.when(spcService.possuiNegativacao(usuario)).thenReturn(true);
+		Mockito.when(spcService.possuiNegativacao(Mockito.any(Usuario.class))).thenReturn(true);
 		
 		try {
 			service.alugarFilme(usuario, filmes);
@@ -190,17 +190,24 @@ public class LocacaoServiceTest {
 	@Test
 	public void deveEnviarEmailParaLocacoesAtrasadas() {
 		Usuario usuario = umUsuario().agora();
+		Usuario usuario2 = umUsuario().comNome("Usuario em dia").agora();
+		Usuario usuario3 = umUsuario().comNome("Outro atrasado").agora();
 		List<Locacao> locacoes = Arrays.asList(
-						umLocacao()
-						.comUsuario(usuario)
-						.comDataRetorno(obterDataComDiferencaDias(-2))
-						.agora());
+						umLocacao().comUsuario(usuario).atrasada().agora(),
+						umLocacao().comUsuario(usuario2).agora(),
+						umLocacao().comUsuario(usuario3).atrasada().agora(),
+						umLocacao().comUsuario(usuario3).atrasada().agora());
 		
 		Mockito.when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
 		
 		service.notificarAtrasos();
 		
+		Mockito.verify(emailService, Mockito.times(3)).notificarAtraso(Mockito.any(Usuario.class));
 		Mockito.verify(emailService).notificarAtraso(usuario);
+		Mockito.verify(emailService, Mockito.atLeastOnce()).notificarAtraso(usuario3);
+		Mockito.verify(emailService, Mockito.never()).notificarAtraso(usuario2);
+		Mockito.verifyNoMoreInteractions(emailService);
+		Mockito.verifyZeroInteractions(spcService);
 	}
 	
 	//Usado apenas para gerar o Builder da Locacao
