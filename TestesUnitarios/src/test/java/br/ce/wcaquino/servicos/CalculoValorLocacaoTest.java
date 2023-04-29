@@ -27,6 +27,7 @@ import br.ce.wcaquino.exceptions.LocadoraException;
 public class CalculoValorLocacaoTest {
 	
 	private LocacaoService service;
+	private SPCService spcService;
 	
 	@Parameter
 	public List<Filme> filmes;
@@ -50,6 +51,8 @@ public class CalculoValorLocacaoTest {
 		service = new LocacaoService();
 		LocacaoDAO dao = Mockito.mock(LocacaoDAO.class);
 		service.setLocacaoDAO(dao);
+		spcService = Mockito.mock(SPCService.class);
+		service.setSpcService(spcService);
 	}
 	
 	

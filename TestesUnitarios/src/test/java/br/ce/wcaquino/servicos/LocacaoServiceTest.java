@@ -6,6 +6,7 @@ import static br.ce.wcaquino.builders.UsuarioBuilder.umUsuario;
 import static org.hamcrest.CoreMatchers.is;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -28,12 +29,12 @@ import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.matchers.MatchersProprios;
 import br.ce.wcaquino.utils.DataUtils;
-import buildermaster.BuilderMaster;
 
 public class LocacaoServiceTest {
 	
 	private LocacaoService service;
 	private List<Filme> filmes;
+	private SPCService spcService;
 	
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
@@ -47,6 +48,8 @@ public class LocacaoServiceTest {
 		filmes = new ArrayList<Filme>();
 		LocacaoDAO dao = Mockito.mock(LocacaoDAO.class);
 		service.setLocacaoDAO(dao);
+		spcService = Mockito.mock(SPCService.class);
+		service.setSpcService(spcService);
 	}
 	
 	@Test
@@ -142,60 +145,6 @@ public class LocacaoServiceTest {
 		service.alugarFilme(usuario, null);
 	}
 	
-//	@Test
-//	public void devePagar75PorcentoNoFilme_3() throws FilmeSemEstoqueException, LocadoraException {
-//		Usuario usuario = new Usuario("Usuario 1");
-//		filmes.addAll(Arrays.asList(new Filme("Filme 1", 2, 4.0), new Filme("Filme 2", 2, 4.0), new Filme("Filme 3", 2, 4.0)));
-//		
-//		Locacao resultado = service.alugarFilme(usuario, filmes);
-//		
-//		//4+4+3==11
-//		Assert.assertThat(resultado.getValor(), CoreMatchers.is(11.0));
-//		
-//	}
-//	
-//	@Test
-//	public void devePagar50PorcentoNoFilme_4() throws FilmeSemEstoqueException, LocadoraException {
-//		Usuario usuario = new Usuario("Usuario 1");
-//		filmes.addAll(Arrays.asList(
-//				new Filme("Filme 1", 2, 4.0), new Filme("Filme 2", 2, 4.0), 
-//				new Filme("Filme 3", 2, 4.0), new Filme("Filme 4", 2, 4.0)));
-//		
-//		Locacao resultado = service.alugarFilme(usuario, filmes);
-//		
-//		//4+4+3+2==13
-//		Assert.assertThat(resultado.getValor(), CoreMatchers.is(13.0));
-//		
-//	}
-//	
-//	@Test
-//	public void devePagar25PorcentoNoFilme_5() throws FilmeSemEstoqueException, LocadoraException {
-//		Usuario usuario = new Usuario("Usuario 1");
-//		filmes.addAll(Arrays.asList(
-//				new Filme("Filme 1", 2, 4.0), new Filme("Filme 2", 2, 4.0),	new Filme("Filme 3", 2, 4.0), 
-//				new Filme("Filme 4", 2, 4.0), new Filme("Filme 5", 2, 4.0)));
-//		
-//		Locacao resultado = service.alugarFilme(usuario, filmes);
-//		
-//		//4+4+3+2+1==14
-//		Assert.assertThat(resultado.getValor(), CoreMatchers.is(14.0));
-//		
-//	}
-//	
-//	@Test
-//	public void devePagar0PorcentoNoFilme_6() throws FilmeSemEstoqueException, LocadoraException {
-//		Usuario usuario = new Usuario("Usuario 1");
-//		filmes.addAll(Arrays.asList(
-//				new Filme("Filme 1", 2, 4.0), new Filme("Filme 2", 2, 4.0),	new Filme("Filme 3", 2, 4.0), 
-//				new Filme("Filme 4", 2, 4.0), new Filme("Filme 5", 2, 4.0), new Filme("Filme 6", 2, 4.0)));
-//		
-//		Locacao resultado = service.alugarFilme(usuario, filmes);
-//		
-//		//4+4+3+2+1+0==14
-//		Assert.assertThat(resultado.getValor(), CoreMatchers.is(14.0));
-//		
-//	}
-	
 	@Test
 	//@Ignore
 	public void deveDevolverNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException {
@@ -205,15 +154,31 @@ public class LocacaoServiceTest {
 		filmes.add(umFilme().agora());
 		
 		Locacao resultado = service.alugarFilme(usuario, filmes);
-		
-		//boolean ehSegunda = DataUtils.verificarDiaSemana(resultado.getDataRetorno(), Calendar.MONDAY);
-		//Assert.assertTrue(ehSegunda);
-		//Assert.assertThat(resultado.getDataRetorno(), new DiaSemanaMatcher(Calendar.MONDAY));
+
 		Assert.assertThat(resultado.getDataRetorno(), MatchersProprios.caiEm(Calendar.MONDAY));
 		Assert.assertThat(resultado.getDataRetorno(), MatchersProprios.caiNumaSegunda(Calendar.MONDAY));
 	}
 	
-	public static void main(String[] args) {
-		new BuilderMaster().gerarCodigoClasse(Locacao.class);
+	@Test
+	public void naoDeveAlugarFilmeParaNegativadoSPC() throws FilmeSemEstoqueException, LocadoraException {
+		Usuario usuario = umUsuario().agora();
+		Usuario usuario2 = umUsuario().comNome("Usuario 2").agora();
+		List<Filme> filmes = Arrays.asList(umFilme().agora());
+		
+		//O mock espera exatamente o mesmo objeto informado no when
+		//Ele sabe se é o mesmo objeto fazendo uma comparacao com o informado no when
+		//e com o que foi passado na chamada metodo. Esse comparacao é feita usando o
+		//equals da classe do objeto
+		Mockito.when(spcService.possuiNegativacao(usuario)).thenReturn(true);
+		
+		exception.expect(LocadoraException.class);
+		exception.expectMessage("Usuario negativado");
+		
+		service.alugarFilme(usuario, filmes);
 	}
+	
+	//Usado apenas para gerar o Builder da Locacao
+//	public static void main(String[] args) {
+//		new BuilderMaster().gerarCodigoClasse(Locacao.class);
+//	}
 }
