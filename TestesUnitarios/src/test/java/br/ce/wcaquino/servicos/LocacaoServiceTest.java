@@ -290,7 +290,6 @@ public class LocacaoServiceTest {
 		Double result = (Double) Whitebox.invokeMethod(service, "calcularValorLocacao",filmes);
 		
 		Assert.assertThat(result, is(4.0));
-		
 	}
 	
 	//Usado apenas para gerar o Builder da Locacao

@@ -1,2 +1,8 @@
-A lib BuilderMaster foi desenvolvida por Wagner Francisco Aquino e está
-disponível no GITHUB: https://github.com/wcaquino/BuilderMaster
+-- A lib BuilderMaster foi desenvolvida por Wagner Francisco Aquino e está
+	disponível no GITHUB: https://github.com/wcaquino/BuilderMaster
+	
+-- Utilizamos o PowerMockito para facilitar nos testes de construtores,
+	metodos estaticos e privados, porém ele gera um impacto no ECLEMMA,
+	de forma que quando executamos a cobertura dos testes, os mesmos tem
+	suas métricas comprometidas. Além disso, a anotação do PowerMockito
+	@PrepareForTest é muito pesada, causando uma lentidão extra nos testes.
