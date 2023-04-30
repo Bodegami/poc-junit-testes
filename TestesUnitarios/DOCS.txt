@@ -10,3 +10,6 @@
 -- O PowerMock é mais indicado para projetos legados e com poucos ou nenhum
 	código existente. Nesse cenário, el,e é melhor indicado por tem uma
 	abordagem menos intrusiva e sem a necessidade de refatoração de metodos.
+	
+-- Quando uma classe de test não está especificando o Runner dela, por padrão
+	ela executa o seguinte Runner: @RunWith(JUnit4.class)
