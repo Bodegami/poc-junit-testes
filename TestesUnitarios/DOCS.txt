@@ -6,3 +6,7 @@
 	de forma que quando executamos a cobertura dos testes, os mesmos tem
 	suas métricas comprometidas. Além disso, a anotação do PowerMockito
 	@PrepareForTest é muito pesada, causando uma lentidão extra nos testes.
+	
+-- O PowerMock é mais indicado para projetos legados e com poucos ou nenhum
+	código existente. Nesse cenário, el,e é melhor indicado por tem uma
+	abordagem menos intrusiva e sem a necessidade de refatoração de metodos.
