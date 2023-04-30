@@ -13,3 +13,7 @@
 	
 -- Quando uma classe de test não está especificando o Runner dela, por padrão
 	ela executa o seguinte Runner: @RunWith(JUnit4.class)
+	
+-- Podemos executar os testes via Maven desde que o Maven esteja instalado na 
+	máquina. Mas para isso devemos acessar a raiz do projeto via terminal, e
+	executar o comando "mvn test". 
