@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,6 +23,7 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -39,7 +41,8 @@ import br.ce.wcaquino.matchers.MatchersProprios;
 import br.ce.wcaquino.runners.ParallelRunner;
 import br.ce.wcaquino.utils.DataUtils;
 
-@RunWith(ParallelRunner.class)
+//@RunWith(ParallelRunner.class)
+//@RunWith(JUnit4.class)
 public class LocacaoServiceTest {
 	
 	@InjectMocks @Spy
@@ -72,6 +75,12 @@ public class LocacaoServiceTest {
 	@After
 	public void tearDown() {
 		System.out.println("finalizando 2...");
+		CalculadoraTest.ordem.append("2");
+	}
+	
+	@AfterClass
+	public static void tearDownClass() {
+		System.out.println(CalculadoraTest.ordem.toString());
 	}
 	
 	@Test

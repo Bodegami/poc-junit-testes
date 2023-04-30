@@ -17,3 +17,10 @@
 -- Podemos executar os testes via Maven desde que o Maven esteja instalado na 
 	máquina. Mas para isso devemos acessar a raiz do projeto via terminal, e
 	executar o comando "mvn test". 
+	
+-- Sobre o Surefire:
+	Link: https://maven.apache.org/surefire/maven-surefire-plugin/
+	Link: https://maven.apache.org/surefire/maven-surefire-plugin/examples/fork-options-and-parallel-execution.html
+	
+-- Para mais conteúdos de Wagner Francisco Aquino:
+	Link: https://wcaquino.me/

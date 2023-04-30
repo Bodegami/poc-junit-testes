@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.hamcrest.CoreMatchers;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,6 +59,18 @@ public class CalculoValorLocacaoTest {
 	@Before
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
+		System.out.println("iniciando 3...");
+		CalculadoraTest.ordem.append("3");
+	}
+	
+	@After
+	public void tearDown() {
+		System.out.println("finalizando 3...");
+	}
+	
+	@AfterClass
+	public static void tearDownClass() {
+		System.out.println(CalculadoraTest.ordem.toString());
 	}
 	
 	
@@ -75,8 +89,10 @@ public class CalculoValorLocacaoTest {
 	
 	//DATA DRIVEN TEST
 	@Test
-	public void deveCalcularValorLocacaoConsiderandoDescontos() throws FilmeSemEstoqueException, LocadoraException {
+	public void deveCalcularValorLocacaoConsiderandoDescontos() throws FilmeSemEstoqueException, LocadoraException, InterruptedException {
 		Usuario usuario = new Usuario("Usuario 1");
+		
+		//Thread.sleep(5000);
 		
 		Locacao resultado = service.alugarFilme(usuario, filmes);
 		

@@ -1,6 +1,7 @@
 package br.ce.wcaquino.servicos;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,9 +11,11 @@ import org.junit.runners.JUnit4;
 import br.ce.wcaquino.exceptions.NaoPodeDividirPorZeroException;
 import br.ce.wcaquino.runners.ParallelRunner;
 
-@RunWith(ParallelRunner.class)
+//@RunWith(ParallelRunner.class)
 //@RunWith(JUnit4.class)
 public class CalculadoraTest {
+	
+	public static StringBuffer ordem = new StringBuffer();
 	
 	private Calculadora calc;
 	
@@ -20,11 +23,17 @@ public class CalculadoraTest {
 	public void setup() {
 		calc = new Calculadora();
 		System.out.println("iniciando...");
+		ordem.append("1");
 	}
 	
 	@After
 	public void tearDown() {
 		System.out.println("finalizando...");
+	}
+	
+	@AfterClass
+	public static void tearDownClass() {
+		System.out.println(ordem.toString());
 	}
 	
 	@Test
